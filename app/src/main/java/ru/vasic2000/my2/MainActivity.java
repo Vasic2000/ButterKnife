@@ -6,13 +6,17 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import moxy.MvpAppCompatActivity;
+import moxy.presenter.InjectPresenter;
+import moxy.presenter.ProvidePresenter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MvpAppCompatActivity implements MainView {
+    @InjectPresenter
+    MainPresenter presenter;
+
     @BindView(R.id.btnCounter1)
     Button button1;
     @BindView(R.id.btnCounter2)
@@ -37,48 +41,56 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick(R.id.btnCounter1)
-    public void buttonOneClick() {
-        showLoading();
-        button1.setText("Crash 1!!!");
-        hideLoading();
+    @ProvidePresenter
+    public MainPresenter createPresenter() {
+        return new MainPresenter();
     }
 
+    @OnClick(R.id.btnCounter1)
+    public void buttonOneClick() {
+        presenter.btnOneClick();
+    }
     @OnClick(R.id.btnCounter2)
     public void buttonTwoClick() {
-        showLoading();
-        button2.setText("Crash 2!!!");
-        hideLoading();
+        presenter.btnTwoClick();
     }
     @OnClick(R.id.btnCounter3)
     public void buttonThreeClick() {
-        showLoading();
+        presenter.btnThreeClick();
+    }
+
+    @Override
+    public void btn1Click() {
+        button1.setText("Crash 1!!!");
+    }
+    @Override
+    public void btn2Click() {
+        button2.setText("Crash 2!!!");
+    }
+    @Override
+    public void btn3Click() {
         button3.setText("Crash 3!!!");
-        hideLoading();
     }
 
-    private void showLoading() {
-        button1.setVisibility(View.INVISIBLE);
-        button2.setVisibility(View.INVISIBLE);
-        button3.setVisibility(View.INVISIBLE);
-        tv1.setVisibility(View.INVISIBLE);
-        tv2.setVisibility(View.INVISIBLE);
-        tv3.setVisibility(View.INVISIBLE);
+    @Override
+    public void showLoading() {
+        button1.setVisibility(View.GONE);
+        button2.setVisibility(View.GONE);
+        button3.setVisibility(View.GONE);
+        tv1.setVisibility(View.GONE);
+        tv2.setVisibility(View.GONE);
+        tv3.setVisibility(View.GONE);
         pb.setVisibility(View.VISIBLE);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
-    private void hideLoading() {
+    @Override
+    public void hideLoading() {
         button1.setVisibility(View.VISIBLE);
         button2.setVisibility(View.VISIBLE);
         button3.setVisibility(View.VISIBLE);
         tv1.setVisibility(View.VISIBLE);
         tv2.setVisibility(View.VISIBLE);
         tv3.setVisibility(View.VISIBLE);
-        pb.setVisibility(View.INVISIBLE);
+        pb.setVisibility(View.GONE);
     }
 }
